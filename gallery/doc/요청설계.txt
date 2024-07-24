@@ -1,0 +1,25 @@
+# 홈 페이지 요청 
+요청내용 :	/
+파라미터 :	None
+컨트롤러 :	com.human.home.HomeController
+처리함수 :	goHome()
+응답문서 :	/WEB-INF/jsp/home.jsp
+
+-------------------------------------------------------------------
+### GALLERY 관련 요청 설계
+
+# 리스트 폼보기 요청
+요청내용 :	/gallery/galList.gal
+파라미터 :	[nowPage]
+컨트롤러 :	com.human.gallery.controller.Gallery
+처리함수 :	galList()
+응답문서 :	/WEB-INF/jsp/gallery/gallery.jsp
+
+
+
+-------------------------------------------------------------------
+요청내용 :
+파라미터 :
+컨트롤러 :
+처리함수 :
+응답문서 :

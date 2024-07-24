@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gSQL">
+	
+	<sql id="selCnt">
+		SELECT
+			COUNT(*)
+		FROM
+			gallery
+	</sql>
+	
+	<!-- 총 게시글 갯수 조회 -->
+	<select id="getCount" resultType="int">
+		<include refid="selCnt" />
+	</select>
+	
+	<!-- 총 게시글 카운트 조회 -->
+	<select id="getTotal" resultType="int">
+		<include refid="selCnt" />
+		WHERE
+			gal_isshow = 'Y'
+	</select>
+	
+	<!-- 게시글 리스트 조회 -->
+	<select id="selList" resultType="gVO" parameterType="page">
+		SELECT
+		    rno, gno, id, title, body, wdate, cnt, pno, oriname, savename
+		FROM 
+		    (
+		        SELECT
+		            ROWNUM rno, gno, id, title, body, wdate, cnt, pno, oriname, savename
+		        FROM
+		            (
+		                SELECT
+		                    gal_no gno, gal_writer id, gal_title title,
+		                    gal_body body, gal_wdate wdate, gal_count cnt,
+		                    pno, photo_oname oriname, photo_sname savename
+		                FROM
+		                    gallery, photo
+		                WHERE
+		                    gal_no = galno
+		                    AND gal_isshow = 'Y'
+		                    AND p_isshow = 'Y'
+		                ORDER BY
+		                    wdate DESC, gno DESC
+		            )
+		    )
+		WHERE
+		    rno BETWEEN #{startRno} AND #{endRno}
+	</select>
+	
+	<!-- 게시글 입력 질의명령 -->
+	<insert id="addGallery" parameterType="gVO">
+		<selectKey keyProperty="gno" resultType="int" order="BEFORE">
+			SELECT
+				NVL(MAX(gal_no) + 1, 1001)
+			FROM 
+				gallery
+		</selectKey>
+		INSERT INTO
+			gallery(gal_no, gal_writer, gal_title, gal_body)
+		VALUES(
+			#{gno}, #{id}, #{title}, #{body}
+		)
+	</insert>
+	
+	<!-- 첨부 사진 입력 질의명령 -->
+	<insert id="addPhoto" parameterType="gVO">
+		<selectKey keyProperty="pno" resultType="int" order="BEFORE">
+			SELECT
+				NVL(MAX(pno) + 1, 1001)
+			FROM
+				photo
+		</selectKey>
+		INSERT INTO
+			photo(pno, galno, photo_oname, photo_sname)
+		VALUES(
+			#{pno}, #{gno}, #{oriname}, #{savename}
+		)
+	</insert>
+	
+</mapper>
